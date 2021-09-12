@@ -5,4 +5,4 @@ src/data
 src/output
 mycv-*.tar.gz
 output/*.pdf
-data/
+/data
