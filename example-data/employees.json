@@ -1,0 +1,32 @@
+[{ 
+    "employeeId": 1
+    ,"employeeName": "John Doe"
+    ,"encodedPersonalData": "eyJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJhZGRyZXNzIjoiTG9uZyB3aW5kaW5nIHJvYWQgMzAzIiwiemlwQ29kZSI6IjEyMzQ1IiwiY2l0eSI6IkV4YW1wbGVUb3duIiwibW9iaWxlUGhvbmUiOiIwNzAxMTExMTExMSIsImVtYWlsQWRkcmVzcyI6ImouZG9lQGV4YW1wbGUuY29tIn0K"
+    ,"education": [{ 
+        "startDate": "2000-01-01"
+        ,"endDate": "2004-12-01"
+        ,"school": "School of Rock"
+        ,"education": "Master of Puppets" 
+        },{ 
+        "startDate": "1999-01-01"
+        ,"endDate": "1999-12-23"
+        ,"school": "Home School"
+        ,"education": "Life 101"
+        }
+    ]
+    ,"knowledge": {
+        "languages": [{
+            "language": "swedish"
+            ,"level": "fluently" },{
+            "language": "english"
+            ,"level": "fluently"
+            }
+        ]
+        ,"softwareSkills": [ "Microsoft Word" ]
+        ,"programmingSkills": ["AMOS" ]
+    }
+    ,"interests": {
+        "personal": [ "Rock Music" ]
+        ,"professional": [ "Things" ]
+    }
+ }]

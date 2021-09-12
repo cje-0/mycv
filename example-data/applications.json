@@ -1,0 +1,13 @@
+[{
+    "applicationId": 1
+    ,"employeeId": 1
+    ,"employerId": 1
+    ,"position": "Working man"
+    ,"aboutMe": [{ 
+            "lang": "en"
+            ,"text": "Hello,\n\nThis is an example text of a description of myself"
+        },{
+            "lang": "sv"
+            ,"text": "Hej,\n\nDetta är exempeltext som beskriver mig som person"
+        }]
+}]

@@ -1,0 +1,8 @@
+.vscode
+mycv.tar.gz
+__pycache__
+src/data
+src/output
+mycv-*.tar.gz
+output/*.pdf
+data/

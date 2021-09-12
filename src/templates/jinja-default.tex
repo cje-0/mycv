@@ -1,0 +1,260 @@
+\BLOCK{set employee = employees | selectattr("employeeId", "equalto", application.employeeId) | first}
+\BLOCK{set receiver = employers | selectattr("employerId", "equalto", application.employerId) | first}
+
+% TODO: multiple language support is not implemented in template yet!!
+\BLOCK{set selectedlanguage = config.lang | default('sv')}
+\BLOCK{set authorName = author.firstName | default('John') ~ ' ' ~ author.lastName | default('Doe')}
+
+\documentclass[a4paper, 10pt]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[top=1cm,right=1cm,left=1cm,bottom=1cm]{geometry}
+\usepackage{graphicx}
+\usepackage{flowfram}
+\usepackage{url}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{multicol}
+
+\usepackage[pdftex,
+            pdfauthor={\VAR{authorName}},
+            pdftitle={Curriculum vitae},
+            pdfsubject={Curriculum vitae},
+            pdfkeywords={\VAR{authorName}, CV, Career History, Education History, Computer Skills},
+            pdfproducer={\VAR{authorName} (cv.py)},
+            pdfcreator={\VAR{authorName} (Python, jinja2, pdflatex)},hidelinks]{hyperref}
+
+
+% define some color names, see http://latexcolor.com/
+% actual definitions are in cv.py and passed through the "config" variable
+\BLOCK{for color in config['colorconfig']['colordefinitions']}
+\definecolor{\VAR{color['name']}}{rgb}{\VAR{color['rgb'][0]},\VAR{color['rgb'][1]},\VAR{color['rgb'][2]}}
+\BLOCK{endfor}
+
+% pick up mapping from "config" variable. set theme colors from colormapping, by reference names defined above
+\BLOCK{set colorset = config['colorconfig']['colormapping'][config['colorset']] }
+
+\colorlet{theme}{\VAR{colorset['color']}}
+\colorlet{theme.color}{theme}
+\colorlet{theme.linecolor}{\VAR{colorset['separator']}}
+\colorlet{theme.headercolor}{\VAR{colorset['header']}}
+\colorlet{theme.contactcolor}{\VAR{colorset['contact']}}
+
+%\usepackage{fontspec}
+
+\usepackage[scaled]{berasans}
+\renewcommand*\familydefault{\sfdefault}  %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+
+\setlength{\parskip}{12pt}
+
+%\setmainfont[Ligatures=TeX]{Georgia}
+%\setsansfont[Ligatures=TeX]{Arial}
+
+% --------------------------------------------------------------
+% FRAME LAYOUT
+% --------------------------------------------------------------
+%# Left Frame
+\newstaticframe{0.2\textwidth}{\textheight}{0pt}{0pt}[leftframe]
+\newlength{\LeftMainSep}
+\setlength{\LeftMainSep}{0.2\textwidth}
+\addtolength{\LeftMainSep}{1\columnsep}
+
+% Frame for vertical line
+\newstaticframe{1.5pt}{\textheight}{\LeftMainSep}{0pt}[vlineframe]
+
+%# Main Body
+\addtolength{\LeftMainSep}{1.5pt}
+\addtolength{\LeftMainSep}{1\columnsep}
+\newflowframe{0.7\textwidth}{\textheight}{\LeftMainSep}{0pt}[mainframe] % ;)
+
+\getstaticid{\leftframeid}{leftframe}
+\getstaticid{\vlineframeid}{vlineframe}
+
+\setstaticframe{\leftframeid}{valign=t} % align top
+
+% --------------------------------------------------------------
+% COMMANDS AND ENVIRONMENTS
+% --------------------------------------------------------------
+
+%##### DEFINE TITLEDITEMIZE
+\newenvironment{titleditemize}[1]{%
+\begin{small}
+\paragraph{#1}
+\begin{itemize}[noitemsep, topsep=0pt]}{\end{itemize}\end{small}}
+%##### // END DEFINE TITLEDITEMIZE
+
+%##### DEFINE MULTICOLITEMIZE
+\newenvironment{mymulticolitemize}[2]{%
+%\setlength\premulticols{0pt}
+\setlength\multicolsep{0pt}%
+\begin{small}
+\normalsize{\textbf{#2}}
+\begin{multicols}{#1}
+\begin{itemize}[noitemsep, topsep=0pt]
+}{\end{itemize}\end{multicols}\end{small}\vspace{1em}}
+%##### // END DEFINE MULTICOLITEMIZE
+
+
+%##### DEFINE MYBLOCK
+\newenvironment{myblock}[1]{%
+\begin{flushleft}
+\normalsize{\textbf{\color{theme.headercolor}{#1}}} \\
+\begin{adjustwidth}{1cm}{}\begin{small}
+}{\end{small}\end{adjustwidth}\end{flushleft}}
+%##### // END DEFINE MYBLOCK
+
+%##### DEFINE MYSECTION
+\newenvironment{mysection}[1]{%
+\LARGE{\textbf{\color{theme.headercolor}{#1}}} \\
+}
+%##### // END DEFINE MYSECTION
+
+\pagestyle{empty}
+
+% ##### BEGIN DOCUMENT
+\begin{document}
+
+% --------------------------------------------------------------
+% STATIC FRAME CONTENT
+% --------------------------------------------------------------
+\begin{staticcontents}{\leftframeid}
+\begin{flushright}
+\includegraphics[width=0.8\columnwidth]{\VAR{photopath}} \\
+{\color{theme.contactcolor}\small
+\VAR{employee.personalData.firstName} \VAR{employee.personalData.lastName} \\
+\VAR{employee.personalData.address} \\
+\VAR{employee.personalData.zipCode} \VAR{employee.personalData.city} \\
+\vspace{1em}
+\href{tel:\VAR{employee.personalData.mobilePhone}}{\VAR{employee.personalData.mobilePhone}} \\
+\href{mailto:\VAR{employee.personalData.emailAddress}}{\VAR{employee.personalData.emailAddress}} \\
+}
+\end{flushright}
+\end{staticcontents}
+
+%# Vertical line
+\begin{staticcontents}{\vlineframeid}
+\hfill
+\tikz{\draw[loosely dotted,color=armygreen,line width=1.5pt,yshift=0](0,0) -- (0,\textheight);}
+\hfill\mbox{}
+\end{staticcontents}
+
+\pagestyle{empty} % Disable all page numbering
+\setlength{\parindent}{0pt} % Stop paragraph indentation
+
+\BLOCK{if not config['skipcover'] | default(False)}
+% --------------------------------------------------------------
+% COVER LETTER
+% --------------------------------------------------------------
+\begin{mysection}{\VAR{employee.personalData.firstName} \VAR{employee.personalData.lastName}}
+\begin{myblock}{Application for the role of \VAR{application['position']}}
+\VAR{application.aboutMe[0].text| texescape}
+\end{myblock}
+\end{mysection}
+
+\clearpage
+\BLOCK{endif}
+
+%
+% --------------------------------------------------------------
+% CV
+% --------------------------------------------------------------
+%##### EMPLOYMENTHISTORY
+\begin{mysection}{Employment History}
+%# Iterate through all previous employments for selected employee
+\BLOCK{for selected_employee in employmenthistory if selected_employee.employeeId == application.employeeId}
+\BLOCK{for employment in selected_employee.employmentHistory if employers|selectattr("employerId", "equalto", employment.employerId)}
+\BLOCK{set selected_employer = employers | selectattr("employerId", "equalto", employment.employerId) | first}
+
+\begin{myblock}{\VAR{employment.startDate | simpledate} - \VAR{employment.endDate | default('NOW') | simpledate}, \VAR{selected_employer.employerName | texescape}}
+\VAR{employment.about | texescape}
+
+%##### LIST POSITIONS
+\begin{titleditemize}{Positions}
+\BLOCK{for selected_position in employment.positions}
+\item \textbf{\VAR{selected_position.startDate | simpledate} - \VAR{selected_position.endDate | default('NOW') | simpledate} : \VAR{selected_position.position | texescape}} \\
+\VAR{selected_position.description | texescape}
+\BLOCK{endfor} %# endfor selected_position
+\end{titleditemize}
+%##### // END LIST POSITIONS
+
+%##### KEYACHIEVEMENTS
+\begin{titleditemize}{Key achievements}
+\BLOCK{for selected_position in employment.positions}
+\BLOCK{for achievement in selected_position.keyAchievements}
+\item \VAR{achievement.text | texescape}
+\BLOCK{endfor} %# endfor achievement
+\BLOCK{endfor} %# endfor selected_position
+\end{titleditemize}
+%##### // END KEYACHIEVEMENTS
+
+%##### KEYSKILLSGATHERED
+\begin{titleditemize}{Key skills gathered}
+\BLOCK{for selected_position in employment.positions}
+\BLOCK{for skillsgathered in selected_position.keySkillsGathered}
+\item \VAR{skillsgathered.text | texescape}
+\BLOCK{endfor} %# endfor skillsgathered
+\BLOCK{endfor} %# endfor selected_position
+\end{titleditemize}
+%##### // END KEYSKILLSGATHERED
+
+\end{myblock}
+\BLOCK{endfor} %# endfor employment
+\BLOCK{endfor} %# endfor selected_employee
+\end{mysection}
+%##### // END EMPLOYMENTHISTORY
+
+%#### \clearpage
+
+%##### EDUCATION HISTORY
+\begin{mysection}{Education}
+\BLOCK{for education in employee.education}
+\begin{myblock}{\VAR{education.startDate | simpledate} - \VAR{education.endDate | default('NOW') | simpledate}, \VAR{education.school | texescape}}
+\begin{small}
+\normalsize{\textbf{\VAR{education['education'] | texescape}}} \\
+\VAR{education['description']}
+\end{small}
+\end{myblock}
+\BLOCK{endfor} %# education
+\end{mysection}
+
+%##### SOFTWARE KNOWLEDGE
+\begin{mysection}{Software Knowledge}
+
+\begin{mymulticolitemize}{3}{Programming Languages}
+\BLOCK{for language in employee.knowledge.programmingSkills}
+\item \VAR{language}
+\BLOCK{endfor}
+\end{mymulticolitemize}
+
+\begin{mymulticolitemize}{3}{Software}
+\BLOCK{for software in employee.knowledge.softwareSkills}
+\item \VAR{software}
+\BLOCK{endfor}
+\end{mymulticolitemize}
+
+\end{mysection}
+%##### // END SOFTWARE KNOWLEDGE
+
+
+%##### INTERESTS
+\begin{mysection}{Interests}
+
+\begin{mymulticolitemize}{2}{Professional}
+\BLOCK{for interest in employee.interests.professional}
+\item \VAR{interest}
+\BLOCK{endfor}
+\end{mymulticolitemize}
+
+\begin{mymulticolitemize}{3}{Personal}
+\BLOCK{for interest in employee.interests.personal}
+\item \VAR{interest}
+\BLOCK{endfor}
+\end{mymulticolitemize}
+
+\end{mysection}
+%##### // END INTERESTS
+
+\end{document}
+%##### // END DOCUMENT

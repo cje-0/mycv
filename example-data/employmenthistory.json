@@ -1,0 +1,41 @@
+[{
+    "employeeId": 1
+    ,"employmentHistory": [{
+        "employerId": 2,
+        "startDate": "2010-01-01",
+        "about": "Manifacturing steel ball cage out of sucker gauge",
+        "positions": [{
+            "position": "Rider of highway 6",
+            "description": "Gathering crowds for spark spectacles",
+            "startDate": "2010-01-01",
+            "keyAchievements": [{
+                "lang": "en"
+                ,"text": "Mile high spark spectacle"
+            }],
+            "keySkillsGathered": [{
+                "lang": "en"
+                ,"text": "Becoming a master of sparks"
+            }]
+            }
+        ]
+    },{
+        "employerId": 3
+        ,"startDate": "2005-01-01"
+        ,"endDate": "2009-12-24"
+        ,"about": "Following rumours that were spreadin' round in that Texas town. About that shack outside La Grange"
+        ,"positions": [{
+            "position": "Locator of shack"
+            ,"description": "Finding that home out on the range"
+            ,"keyAchievements": [{
+                "lang": "en"
+                ,"text": "Locating shack outside La Grange"
+            }]
+            ,"keySkillsGathered": [{
+                "lang": "en"
+                ,"text": "Have mercy"
+            }]
+            ,"startDate": "2005-01-01"
+            ,"endDate": "2009-12-24"
+        }]
+    }]
+}]

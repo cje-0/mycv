@@ -1,0 +1,9 @@
+[{ "employerId": 1
+    ,"employerName": "ExampleCompany ltd."
+},{
+    "employerId": 2
+    ,"employerName": "Some Company AB"
+},{
+    "employerId": 3
+    ,"employerName": "Lastname and sons"
+}]
